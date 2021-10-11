@@ -14,5 +14,9 @@
   "license": "ISC",
   "devDependencies": {
     "concurrently": "^5.1.0"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^8.5.1",
+    "react-router": "^5.2.1"
   }
 }

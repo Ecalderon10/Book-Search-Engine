@@ -1,2 +1,2 @@
 
-module.exports = { User:'./User', Book:'./Book'};
+module.exports = { User:require('./User')};

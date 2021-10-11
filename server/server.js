@@ -29,7 +29,7 @@ app.get("*", (req, res) => {
 
 db.once("open", () => {
   app.listen(PORT, () => {
-    console.log(`useGraphal at Http://localhost:${PORT} ${server.graphqlPath}`);
+    console.log(`useGraphal at Http://localhost:${PORT}${server.graphqlPath}`);
     console.log(`🌍 Now listening on localhost:${PORT}`);
   });
 });

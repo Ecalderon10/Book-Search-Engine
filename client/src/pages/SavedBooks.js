@@ -6,56 +6,32 @@ import {
   Card,
   Button,
 } from "react-bootstrap";
-// import { getMe, deleteBook } from "../utils/API";
 import Auth from "../utils/auth";
-import { Redirect, UseParams } from "react-router";
-// import { removeBookId } from "../utils/localStorage";
+import { removeBookId } from "../utils/localStorage";
+import { useMutation, useQuery } from "@apollo/client";
 import { QUERY_ME } from "../utils/queries";
 import { REMOVE_BOOK } from "../utils/mutations";
-import { useQuery } from "@apollo/client";
 
 const SavedBooks = () => {
-  const [userData, setUserData] = useState({});
+  //pulled error from useQuery, renamed to meError to not conflict with the useMutation error definition.
 
-  // use this to determine if `useEffect()` hook needs to run again
-  const userDataLength = Object.keys(userData).length;
+  // push in userId to the GET_ME Query
+  const {
+    loading,
+    data,
+    error: meError,
+  } = useQuery(QUERY_ME, {
+    variables: { userId: Auth.getProfile().data._id },
+  });
+  const [removeBook, { error }] = useMutation(REMOVE_BOOK);
 
-  const getUserData = async () => {
-    const { userId } = UseParams();
+  const userData = data?.me || {savedBooks:[]};
+  // console.log(Auth.getProfile());
 
-    const { loading, data } = useQuery(QUERY_ME, {
-      variables: { userId: userId },
-    });
-
-    if (Auth.loggedIn() && Auth.getUSer().data._id === userId) {
-      return <Redirect to="/" />;
-    }
-    if (loading) {
-      return <div>Loading...</div>;
-    }
-    if (!userData?.username) {
-      return <h4>You need to be logged in to use this feature</h4>;
-    }
-
-    try {
-      const token = Auth.loggedIn() ? Auth.getToken() : null;
-
-      if (!token) {
-        return false;
-      }
-
-      const response = await getMe(token);
-
-      if (!response.ok) {
-        throw new Error("something went wrong!");
-      }
-
-      const user = await response.json();
-      setUserData(user);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  //need to stringify error to view
+  if (meError) {
+    alert(JSON.stringify(meError));
+  }
 
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
   const handleDeleteBook = async (bookId) => {
@@ -66,25 +42,17 @@ const SavedBooks = () => {
     }
 
     try {
-      const response = await deleteBook(bookId, token);
+      const { data } = await removeBook({
+        variables: { bookId },
+      });
 
-      if (!response.ok) {
-        throw new Error("something went wrong!");
-      }
-
-      const updatedUser = await response.json();
-      setUserData(updatedUser);
       // upon success, remove book's id from localStorage
       removeBookId(bookId);
+      window.location.reload();
     } catch (err) {
       console.error(err);
     }
   };
-
-  // if data isn't here yet, say so
-  if (!userDataLength) {
-    return <h2>LOADING...</h2>;
-  }
 
   return (
     <>
