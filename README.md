@@ -7,7 +7,7 @@ Heroku: https://book-search-engine-ec.herokuapp.com/
 
 
 ## Description
-This application was built to help the user have an application to research books, build their own profile and and be able to save the books to their profile for they can refrence them later.
+This application was built to help the user have an application to research books, build their own profile and and be able to save the books to their profile for they can reference them later.
 
 
 
