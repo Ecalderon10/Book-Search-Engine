@@ -27,12 +27,11 @@ const SavedBooks = () => {
 
   const userData = data?.me || {savedBooks:[]};
   // console.log(Auth.getProfile());
-
   //need to stringify error to view
   if (meError) {
     alert(JSON.stringify(meError));
   }
-
+  
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
   const handleDeleteBook = async (bookId) => {
     const token = Auth.loggedIn() ? Auth.getToken() : null;
@@ -43,7 +42,7 @@ const SavedBooks = () => {
 
     try {
       const { data } = await removeBook({
-        variables: { bookId },
+        variables: { savedBooks: bookId },
       });
 
       // upon success, remove book's id from localStorage
@@ -86,7 +85,7 @@ const SavedBooks = () => {
                   <Card.Text>{book.description}</Card.Text>
                   <Button
                     className="btn-block btn-danger"
-                    onClick={() => handleDeleteBook(book.bookId)}
+                    onClick={() => handleDeleteBook(book._id)}
                   >
                     Delete this Book!
                   </Button>
